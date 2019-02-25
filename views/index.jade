@@ -1,0 +1,36 @@
+extends layout
+
+block content
+    script(src="https://www.gstatic.com/firebasejs/5.8.4/firebase.js")
+    script(src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.2.0/d3-selection.min.js")
+    script(src="https://d3js.org/d3-selection-multi.v1.min.js")
+
+    #app
+        .login-zone
+            .login.info(v-if="isSigned") Hi {{ user.uname }}. Your id is {{ user.uid }}.
+            .login.info(v-else) Login is required.
+            input.login#input-name(v-if="! isSigned")(placeholder="Enter your name." value="chanhee")
+            .login.login-button#login-button(v-if="! isSigned")(v-on:click="login") login
+        .test-zone
+            .title {{ pageInfo.title }}
+            .content
+                .content-html(v-html="pageInfo.contentHTML")
+                .button#task-complete-button(v-if='pageInfo.type === "color-blind"')(v-on:click="blindTest") Complete
+            .button.back-page-button(v-on:click="backPage") BACK
+            .button.next-page-button(v-on:click="nextPage") NEXT
+
+    script(src="/javascripts/index.js")
+    script(src="/javascripts/Constants.js")
+    script(src="/javascripts/Util.js")
+    script(src="/javascripts/pages.js")
+    script(src="/javascripts/firebase.config.js")
+    script(src="/javascripts/login.js")
+    script(src="/javascripts/vue.js")
+    script(src="/javascripts/nodeLinkDiagram.js")
+
+
+

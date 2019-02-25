@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="350px" height="500px" viewBox="0 0 350 500" enable-background="new 0 0 350 500" xml:space="preserve">
+<g id="Layer_0--Link_0"> 
+	<line stroke="#AD3" stroke-width="10" x1="130" y1="400" x2="175" y2="250"/>
+</g>
+<g id="Layer_1--Link_1">
+	<line stroke="#CCC" stroke-width="3" x1="100" y1="100" x2="175" y2="150"/>
+	<line stroke="#CCC" stroke-width="3" x1="175" y1="50" x2="175" y2="150"/>
+	<line stroke="#CCC" stroke-width="3" x1="250" y1="100" x2="175" y2="150"/>
+</g>
+<g id="Layer_2--Link_2">
+	<line stroke="#CCC" stroke-width="3" x1="90" y1="320" x2="175" y2="250"/>
+	<line stroke="#CCC" stroke-width="3" x1="130" y1="400" x2="175" y2="250"/>
+	<line stroke="#CCC" stroke-width="3" x1="220" y1="400" x2="175" y2="250"/>
+	<line stroke="#CCC" stroke-width="3" x1="260" y1="320" x2="175" y2="250"/>
+</g>
+<g id="Layer_2--Link_3">
+	<line stroke="#CCC" stroke-width="3" x1="175" y1="150" x2="175" y2="250"/>
+</g>
+<g id="Layer_0--Node_0"> 
+	<circle fill="#AD3" cx="130" cy="400" r="30"/>
+</g>
+<g id="Layer_3--Node_1">
+	<circle fill="#999" cx="100" cy="100" r="25"/>
+	<circle fill="#999" cx="175" cy="50" r="25"/>	
+	<circle fill="#999" cx="250" cy="100" r="25"/>
+</g>
+<g id="Layer_4--Node_2">
+	<circle fill="#999" cx="90" cy="320" r="25"/>
+	<circle fill="#999" cx="130" cy="400" r="25"/>	
+	<circle fill="#999" cx="220" cy="400" r="25"/>
+	<circle fill="#999" cx="260" cy="320" r="25"/>
+</g>
+<g id="Layer_5--Node_3">
+	<circle fill="#C58" cx="175" cy="150" r="25"/>
+	<text transform="matrix(1 0 0 1 167 160)" fill="#333" font-family="'Helvetica-Bold'" font-size="28">4</text>
+	<circle fill="#58C" cx="175" cy="250" r="25"/>
+	<text transform="matrix(1 0 0 1 167 260)" fill="#333" font-family="'Helvetica-Bold'" font-size="28">2</text>
+</g>
+</svg>
