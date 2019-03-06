@@ -20,9 +20,8 @@ const loginModule = new function () {
     FirebaseAuth.onAuthStateChanged(function (user) {
         if (user) {
             // User is signed in.
-            const isAnonymous = user.isAnonymous;
             const uid = user.uid;
-            const uname = $unameInputField.val();
+            const uname = $('input#input-name').val();
             alert(uname + " is signed in.");
             console.log(uid + ' is signed in.');
             app.setUserInfo(uid, uname);

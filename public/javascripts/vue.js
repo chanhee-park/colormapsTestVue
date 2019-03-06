@@ -7,7 +7,11 @@ const app = new Vue({
             uid: undefined,
             uname: undefined,
             loginTime: undefined,
-
+            test: {
+                'color_blind': false,
+                'tutorial_test': [],
+                'real_test': [],
+            },
         },
         pageNum: 0,
         pageInfo: pages[0],
@@ -16,7 +20,7 @@ const app = new Vue({
     methods: {
         login: () => {
             console.log('Login button is clicked.');
-            const inputName = $unameInputField.val();
+            const inputName = $('input#input-name').val();
             const isNameable = !_.isUndefined(inputName) || inputName.length >= 1;
             if (this.loginButtonLocked) {
                 console.log('Login button is locked.');
@@ -38,7 +42,8 @@ const app = new Vue({
             console.log({
                 uid: app.$data.user.uid,
                 uname: app.$data.user.uname,
-                loginTime: app.$data.user.loginTime
+                loginTime: app.$data.user.loginTime,
+                test: app.$data.user.test
             });
         },
         backPage: () => {
@@ -50,18 +55,30 @@ const app = new Vue({
             app.changePage();
         },
         changePage: () => {
+            clearTimeout(intervalFunc);
+            console.log("Page " + app.$data.pageNum);
             app.$data.pageInfo = pages[app.$data.pageNum];
-            app.pageInteraction(app.$data.pageInfo.type)
+            app.pageInteraction(app.$data.pageInfo.type);
+            app.printUserInfo();
         },
         pageInteraction: (type) => {
             if (type === 'animation_deg') {
                 app.animation('image/degree/network_diagram-degree_', 10);
-            } else if (type === 'task_deg') {
-                app.task('karate', 'deg', 'magma');
+            } else if (type === 'task0') {
+                console.log('TASK 1/3');
+                app.task('karate', 'deg', 'magma', 0);
+            } else if (type === 'task1') {
+                console.log('TASK 2/3');
+                app.task('karate', 'btw', 'brewer_yellow-green-blue', 1);
+            } else if (type === 'task2') {
+                console.log('TASK 3/3');
+                app.task('karate', 'cls', 'rainbow', 2);
+            } else if (type === 'save') {
+                writeUserTestData(app.$data.user);
             }
         },
         blindTest: () => {
-            console.log('hi');
+            console.log('Blind Test');
             const correctVals = [15, 5, 75, 8, 48, 7];
             let color_blind = false;
 
@@ -72,40 +89,24 @@ const app = new Vue({
                     alert("Please enter a number in every input window.");
                     return;
                 }
-                console.log(val === correct_val, val, correct_val);
                 color_blind = val === correct_val ? color_blind : true;
             }
             const addedText = color_blind ? "" : "NOT ";
-            alert("You are " + addedText + "color-blind.")
+            app.$data.user.test['color_blind'] = color_blind;
+            alert("You are " + addedText + "color-blind.");
         },
-
-        animation: (imgUrl, numOfImg) => {
-            console.log('ani');
-            const imgFormat = '.svg';
-            let imgNum = 0;
-
-            const testInterval = setInterval(function () {
-                imgNum = (imgNum < numOfImg) ? (imgNum + 1) : 0;
-                console.log(imgUrl + imgNum + imgFormat);
-                $('#diagram-img').attr("src", imgUrl + imgNum + imgFormat);
-            }, 1000);
-
-            setTimeout(function () {
-                clearTimeout(testInterval);
-            }, 1000 * numOfImg * 2);
-        },
-
-        task: (data, centrality, colormap) => {
+        task: (data, centrality, colormap, taskNum) => {
+            $('svg#network').empty();
+            $('div.render-area').prepend('<div class="button start-button">Start</div>');
             setTimeout(function () {
                 $('.start-button').click(function () {
                     console.log("click");
                     $(this).remove();
-                    drawGraph(data, centrality, colormap, true, function () {
-                        $('body').append('<a class="button next-page-button" href="slide6_btw_def.html">NEXT</a>');
-                    })
+                    drawGraph(data, centrality, colormap, true, taskNum)
                 });
             }, 1000);
         }
     }
 });
 
+let intervalFunc;

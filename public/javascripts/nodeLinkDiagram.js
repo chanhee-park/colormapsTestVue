@@ -1,4 +1,4 @@
-async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, completionFunction, clusterQuestion) {
+async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, taskNum) {
     const startTime = Util.getTime();
     const graph = await $.getJSON('./data/' + dataName + '.json');
     const colorMap = Constant.colorMaps[colorMapName];
@@ -27,24 +27,27 @@ async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, comp
     setAxisInfo();
     drawColorLegend();
     drawLinks();
-    if (refCentrality === 'cluster') {
-        answeredNodes = [];
-        correctAnswerNode = clusterQuestion.correctAnswerNode;
-        highlightNode = clusterQuestion.highlightNode;
-
-        drawHighlightNode();
-
-        $('body').append('<div class="button task-complete-button">Complete</div>');
-        $('.task-complete-button').mousedown(function () {
-            checkAnswerResult(answeredNodes);
-            this.remove();
-        });
-    }
     drawNodes();
 
     function drawHighlightNode() {
         d3.selectAll('.node').remove();
         _.forEach(highlightNode, (nodeId) => {
+            const node = graph.nodes[nodeId];
+            const coord = getCoord({ x: node.x, y: node.y });
+            const color = '#555';
+            svg.append('circle')
+                .attrs({
+                    cx: coord.x,
+                    cy: coord.y,
+                    r: nodeRadius + 5,
+                    fill: color
+                })
+                .classed('node', true)
+                .on('dblclick', function () {
+                    answer(node);
+                })
+        });
+        _.forEach(answeredNodes, (nodeId) => {
             const node = graph.nodes[nodeId];
             const coord = getCoord({ x: node.x, y: node.y });
             const color = '#000';
@@ -56,29 +59,11 @@ async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, comp
                     fill: color
                 })
                 .classed('node', true)
-                .on('click', function () {
+                .on('dblclick', function () {
                     answer(node);
                 })
         });
-        _.forEach(answeredNodes, (nodeId) => {
-            const node = graph.nodes[nodeId];
-            const coord = getCoord({ x: node.x, y: node.y });
-            const color = '#777';
-            svg.append('circle')
-                .attrs({
-                    cx: coord.x,
-                    cy: coord.y,
-                    r: nodeRadius + 5,
-                    fill: color
-                })
-                .classed('node', true)
-                .on('click', function () {
-                    answer(node);
-                })
-        });
-
         drawNodes();
-
     }
 
     /**
@@ -113,58 +98,44 @@ async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, comp
      */
     function drawColorLegend() {
         svg.append('text')
-            .text(refCentrality)
+            .text('low')
             .attrs({
                 x: legendX,
                 y: legendY - 5,
                 'text-anchor': 'start',
                 'alignment-baseline': 'ideographic'
             });
+        svg.append('text')
+            .text('high')
+            .attrs({
+                x: legendX + 255,
+                y: legendY - 5,
+                'text-anchor': 'start',
+                'alignment-baseline': 'ideographic'
+            });
 
-        if (refCentrality === 'cluster') {
-            for (let i = 0; i <= 4; i++) {
-                const color = getHexColor(i);
-                svg.append('rect')
-                    .attrs({
-                        x: legendX + i * 40,
-                        y: legendY,
-                        width: legendSize,
-                        height: legendSize,
-                        fill: color,
-                    });
+
+        for (let i = 0; i <= 255; i++) {
+            const relative = i / 255;
+            const virtualCentrality = Util.getAbsoluteVal(relative, minCentralityVal, maxCentralityVal);
+            const color = getHexColor(virtualCentrality);
+            svg.append('rect')
+                .attrs({
+                    x: legendX + i,
+                    y: legendY,
+                    width: legendSize,
+                    height: legendSize,
+                    fill: color,
+                });
+            if (i === 0 || i === 127 || i === 255) {
                 svg.append('text')
-                    .text(i)
-                    .attrs({
-                        x: legendX + i * 40,
-                        y: legendY + legendSize + 15,
-                        'text-anchor': 'start',
-                        'alignment-baseline': 'central'
-                    })
-
-            }
-        } else {
-            for (let i = 0; i <= 255; i++) {
-                const relative = i / 255;
-                const virtualCentrality = Util.getAbsoluteVal(relative, minCentralityVal, maxCentralityVal);
-                const color = getHexColor(virtualCentrality);
-                svg.append('rect')
+                    .text(virtualCentrality.toFixed(2))
                     .attrs({
                         x: legendX + i,
-                        y: legendY,
-                        width: legendSize,
-                        height: legendSize,
-                        fill: color,
-                    });
-                if (i === 0 || i === 127 || i === 255) {
-                    svg.append('text')
-                        .text(virtualCentrality.toFixed(2))
-                        .attrs({
-                            x: legendX + i,
-                            y: legendY + legendSize + 15,
-                            'text-anchor': 'middle',
-                            'alignment-baseline': 'central'
-                        })
-                }
+                        y: legendY + legendSize + 15,
+                        'text-anchor': 'middle',
+                        'alignment-baseline': 'central'
+                    })
             }
         }
     }
@@ -184,19 +155,9 @@ async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, comp
                     fill: color
                 })
                 .classed('node', true)
-                .on('click', function () {
+                .on('dblclick', function () {
                     answer(node);
                 })
-            // Code to verify that colors are applied correctly
-            // svg.append('text')
-            //     .text(node[refCentrality])
-            //     .attrs({
-            //         x: coord.x,
-            //         y: coord.y,
-            //         fill: '#e55',
-            //         'alignment-baseline': 'central',
-            //         'text-anchor': 'middle'
-            //     });
         });
     }
 
@@ -251,7 +212,7 @@ async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, comp
             addAnswer(node);
             return;
         }
-        checkAnswerResult(node)
+        checkAnswerResult(node);
     }
 
     function addAnswer(node) {
@@ -266,6 +227,16 @@ async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, comp
     }
 
     function checkAnswerResult(userAnswerNode) {
+        d3.selectAll('.node').remove();
+        const coord = getCoord({ x: userAnswerNode.x, y: userAnswerNode.y });
+        svg.append('circle')
+            .attrs({
+                cx: coord.x,
+                cy: coord.y,
+                r: nodeRadius + 5,
+                fill: '#000'
+            });
+        drawNodes();
         const elapsedTime = Util.getTimeDiffFrom(startTime);
         let isCorrect = (refCentrality === 'cluster') ?
             Util.equalElemInArray(correctAnswerNode, userAnswerNode) : userAnswerNode[refCentrality] >= maxCentralityVal;
@@ -280,11 +251,12 @@ async function drawGraph(dataName, refCentrality, colorMapName, isTutorial, comp
                     y: svgHeight - 10,
                     'text-anchor': 'start',
                     'alignment-baseline': 'ideographic'
-                })
+                });
+            app.$data.user.test['tutorial_test'][taskNum] = {
+                'time': elapsedTime,
+                'correctness': isCorrect,
+            };
         }
-
-        completionFunction();
-
         return { elapsedTime, isCorrect }
     }
 }
